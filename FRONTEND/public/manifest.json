@@ -1,0 +1,62 @@
+{
+  "manifest_version": 3,
+  "name": "Shakkar Wallet",
+  "short_name": "Shakkar",
+  "version": "1.0.0",
+  "description": "Non-custodial Web3 wallet — Ethereum Sepolia, Base Sepolia & Monad Testnet. Injects window.ethereum into any dApp.",
+
+  "icons": {
+    "16":  "favicon.svg",
+    "48":  "favicon.svg",
+    "128": "favicon.svg"
+  },
+
+  "action": {
+    "default_title": "Shakkar Wallet",
+    "default_popup": "index.html",
+    "default_icon": {
+      "16":  "favicon.svg",
+      "48":  "favicon.svg",
+      "128": "favicon.svg"
+    }
+  },
+
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["contentScript.js"],
+      "run_at": "document_start",
+      "all_frames": false,
+      "world": "ISOLATED"
+    }
+  ],
+
+  "web_accessible_resources": [
+    {
+      "resources": ["provider.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+
+  "permissions": [
+    "storage",
+    "tabs",
+    "windows",
+    "activeTab",
+    "scripting",
+    "system.display"
+  ],
+
+  "host_permissions": [
+    "<all_urls>"
+  ],
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

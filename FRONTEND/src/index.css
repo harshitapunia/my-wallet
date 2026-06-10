@@ -1,0 +1,936 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Unbounded:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   DESIGN TOKENS
+   ──────────────────────────────────────────────────────────────────────────── */
+:root {
+  --bg-1: #fff8fc;
+  --bg-2: #f7faff;
+  --bg-3: #f1f7ff;
+  --panel: rgba(255, 255, 255, 0.88);
+  --panel-strong: #ffffff;
+  --text-1: #1c2b46;
+  --text-2: #5d6f8d;
+  --line: rgba(169, 188, 218, 0.46);
+  --accent: #f38e28;
+  --accent-strong: #df760a;
+  --accent-blue: #3d83ff;
+  --ok: #0b8a56;
+  --danger: #bf2d3a;
+  --shadow-lg: 0 24px 60px rgba(26, 45, 74, 0.16);
+  --shadow-md: 0 10px 24px rgba(39, 62, 95, 0.12);
+  --shadow-sm: 0 4px 12px rgba(26, 42, 66, 0.08);
+
+  /* Strict Popup Dimensions */
+  --popup-w: 380px;
+  --popup-h: 600px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   GLOBAL RESET
+   ──────────────────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   STRICT POPUP BOUNDING BOX (Fixes text cutoff and squished box issues)
+   ──────────────────────────────────────────────────────────────────────────── */
+html, body, #root {
+  width: 380px !important;
+  min-width: 380px !important;
+  max-width: 380px !important;
+  height: 600px !important;
+  min-height: 600px !important;
+  max-height: 600px !important;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevents horizontal scroll/noodle effect */
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  color: var(--text-1);
+  font-size: 14px;
+  line-height: 1.5;
+  background:
+    radial-gradient(58% 52% at 12% 10%, rgba(255, 204, 227, 0.22) 0%, transparent 100%),
+    radial-gradient(52% 48% at 86% 14%, rgba(185, 217, 255, 0.20) 0%, transparent 100%),
+    linear-gradient(140deg, var(--bg-1) 0%, var(--bg-2) 48%, var(--bg-3) 100%);
+}
+
+#root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Subtle dot-grid texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.20;
+  background-image:
+    linear-gradient(rgba(90, 116, 156, 0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(90, 116, 156, 0.14) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+h1, h2, h3, p { margin: 0; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   TYPOGRAPHY SCALE
+   ──────────────────────────────────────────────────────────────────────────── */
+h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   WALLET APP SHELL
+   ──────────────────────────────────────────────────────────────────────────── */
+.wallet-app {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Sticky top header bar ────────────────────────────────────────────────── */
+.popup-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  background: rgba(255, 255, 255, 0.92);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  position: relative;
+  z-index: 10;
+}
+
+.popup-header .brand-mark.small {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+}
+
+.popup-header-center {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+
+.popup-header .tag {
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+}
+
+.popup-header h2 {
+  font-size: 0.92rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Network pill */
+.network-pill {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.22rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(61, 131, 255, 0.12);
+  border: 1px solid rgba(61, 131, 255, 0.3);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #2060c8;
+  white-space: nowrap;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.network-pill::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #3d83ff;
+  flex-shrink: 0;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%        { opacity: 0.4; }
+}
+
+/* ── Scrollable main content area ────────────────────────────────────────── */
+.popup-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(169, 188, 218, 0.6) transparent;
+}
+
+.popup-body::-webkit-scrollbar { width: 4px; }
+.popup-body::-webkit-scrollbar-track { background: transparent; }
+.popup-body::-webkit-scrollbar-thumb {
+  background: rgba(169, 188, 218, 0.6);
+  border-radius: 4px;
+}
+
+/* ── Bottom status bar ────────────────────────────────────────────────────── */
+.popup-footer {
+  flex-shrink: 0;
+  padding: 0.4rem 0.75rem;
+  border-top: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.88);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   PANEL  –  the core card building block
+   ──────────────────────────────────────────────────────────────────────────── */
+.panel {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 0.85rem;
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.auth-panel,
+.unlock-panel {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   HERO / NETWORK CARD 
+   ──────────────────────────────────────────────────────────────────────────── */
+.hero {
+  border: 1px solid rgba(164, 189, 225, 0.52);
+  border-radius: 0.85rem;
+  box-shadow: var(--shadow-md);
+  padding: 0.75rem;
+}
+
+.hero-brand {
+  background:
+    radial-gradient(circle at 88% 10%, rgba(110, 176, 255, 0.28), transparent 34%),
+    linear-gradient(140deg, rgba(245, 250, 255, 0.96), rgba(236, 245, 255, 0.9));
+}
+
+.hero-logo-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.hero-brand h1 {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 1.3rem;
+}
+
+.brand-title {
+  color: transparent;
+  background: linear-gradient(135deg, #2f77df 0%, #6e48d9 44%, #f08a1f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  letter-spacing: 0.01em;
+}
+
+.hero-network-card {
+  background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(250,253,255,0.84));
+  border: 1px solid rgba(166, 191, 225, 0.52);
+  border-radius: 0.85rem;
+  box-shadow: var(--shadow-sm);
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  width: 100%;
+}
+
+.top-panels {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   FORM ELEMENTS
+   ──────────────────────────────────────────────────────────────────────────── */
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #2e4971;
+  width: 100%;
+}
+
+input,
+textarea,
+select,
+button {
+  font: inherit;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  border: 1px solid #b7cde9;
+  border-radius: 0.62rem;
+  background: #fcfeff;
+  color: #1b3157;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.82rem;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #5f9ef4;
+  box-shadow: 0 0 0 3px rgba(95, 158, 244, 0.2);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 64px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   BUTTONS
+   ──────────────────────────────────────────────────────────────────────────── */
+button {
+  border: 0;
+  border-radius: 0.68rem;
+  min-height: 40px;
+  min-width: 0;
+  width: 100%;
+  padding: 0.55rem 0.9rem;
+  font-weight: 700;
+  font-size: 0.84rem;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, var(--accent), var(--accent-strong));
+  box-shadow: 0 6px 16px rgba(223, 118, 10, 0.26);
+  transition: transform 0.15s ease, box-shadow 0.18s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(223, 118, 10, 0.32);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button:disabled {
+  opacity: 0.62;
+  cursor: not-allowed;
+  transform: none;
+}
+
+button.ghost {
+  background: rgba(61, 131, 255, 0.11);
+  color: #1f4f92;
+  box-shadow: none;
+  border: 1px solid rgba(61, 131, 255, 0.22);
+}
+
+button.ghost:hover {
+  background: rgba(61, 131, 255, 0.18);
+  box-shadow: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   LAYOUT GRIDS
+   ──────────────────────────────────────────────────────────────────────────── */
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+}
+
+.tabs button,
+.sidebar-nav button {
+  min-width: 0;
+  width: 100%;
+  font-size: 0.8rem;
+}
+
+.tabs button.active {
+  background: linear-gradient(180deg, #4a97ff, #2177f0);
+  box-shadow: 0 6px 14px rgba(33, 119, 240, 0.26);
+}
+
+.inline-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+}
+
+.stats-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.grid-two {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.create-grid {
+  gap: 0.65rem;
+}
+
+.create-grid .card > button {
+  width: 100%;
+  min-width: 0;
+  height: auto;
+  min-height: 40px;
+  margin-top: 0.5rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   DASHBOARD
+   ──────────────────────────────────────────────────────────────────────────── */
+.dashboard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+.sidebar-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: linear-gradient(160deg, rgba(254, 255, 255, 0.93), rgba(246, 251, 255, 0.84));
+  border-radius: 0.85rem;
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.38rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.sidebar-nav::-webkit-scrollbar { display: none; }
+
+.sidebar-nav button {
+  flex: 1 1 auto;
+  text-align: center;
+  font-size: 0.74rem;
+  min-height: 34px;
+  min-width: 56px;
+  padding: 0.3rem 0.5rem;
+  background: rgba(255, 255, 255, 0.82);
+  color: #214978;
+  border: 1px solid rgba(167, 193, 226, 0.46);
+  box-shadow: none;
+  border-radius: 0.58rem;
+}
+
+.sidebar-nav button.active {
+  background: linear-gradient(180deg, #4a97ff, #2177f0);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 4px 10px rgba(33, 119, 240, 0.24);
+}
+
+.content-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.9), rgba(247, 251, 255, 0.84));
+  border-radius: 0.85rem;
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+}
+
+.dual-showcase {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.panel-lite {
+  background: #fcfeff;
+  border: 1px solid #c6d9ef;
+  border-radius: 0.78rem;
+  padding: 0.65rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-head button {
+  width: auto;
+  min-height: 30px;
+  font-size: 0.72rem;
+  padding: 0.25rem 0.6rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   CARD & MINI-STAT
+   ──────────────────────────────────────────────────────────────────────────── */
+.card,
+.mini-stat {
+  background: var(--panel-strong);
+  border: 1px solid rgba(170, 194, 228, 0.5);
+  border-radius: 0.78rem;
+  padding: 0.72rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.48rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   WALLET IDENTITY ELEMENTS
+   ──────────────────────────────────────────────────────────────────────────── */
+.wallet-avatar,
+.brand-mark {
+  width: 52px;
+  height: 52px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.brand-mark {
+  margin: 0 auto;
+}
+
+.brand-mark.small {
+  width: 36px;
+  height: 36px;
+  margin: 0;
+}
+
+.wallet-avatar span,
+.brand-mark span {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 30%, #ff8ca2 0%, #de2645 82%);
+  border: 1px solid rgba(255, 215, 220, 0.9);
+  box-shadow: 0 3px 7px rgba(183, 32, 62, 0.3);
+}
+
+.brand-mark.small span {
+  width: 6px;
+  height: 6px;
+  top: 6px;
+}
+
+.wallet-avatar::before,
+.brand-mark::before {
+  content: '';
+  position: absolute;
+  width: 36px;
+  height: 24px;
+  left: 50%;
+  top: 10px;
+  transform: translateX(-50%);
+  border-radius: 48% 52% 44% 44%;
+  background:
+    radial-gradient(circle at 48% 12%, rgba(255, 255, 255, 0.95) 0%, transparent 32%),
+    linear-gradient(165deg, #ffffff 0%, #f7f8fb 58%, #ebedf4 100%);
+  box-shadow: 0 4px 8px rgba(163, 173, 194, 0.2);
+}
+
+.wallet-avatar::after,
+.brand-mark::after {
+  content: '';
+  position: absolute;
+  width: 32px;
+  height: 17px;
+  left: 50%;
+  bottom: 6px;
+  transform: translateX(-50%);
+  clip-path: polygon(
+    0 14%, 7% 0, 14% 14%, 21% 0, 28% 14%, 35% 0, 42% 14%,
+    49% 0, 56% 14%, 63% 0, 70% 14%, 77% 0, 84% 14%,
+    91% 0, 100% 14%, 86% 100%, 14% 100%
+  );
+  background:
+    linear-gradient(180deg, rgba(255, 243, 225, 0.82) 0 2px, transparent 2px),
+    repeating-linear-gradient(
+      90deg,
+      #ddb487 0, #ddb487 4px,
+      #c99667 4px, #c99667 7px
+    );
+  border: 1px solid rgba(176, 126, 81, 0.86);
+  border-top: 0;
+  box-shadow: 0 4px 7px rgba(158, 113, 75, 0.22);
+}
+
+.wallet-avatar span::before,
+.brand-mark span::before {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 2px;
+  left: -13px;
+  top: 19px;
+  border-radius: 4px;
+  background: #ffc3d8;
+  box-shadow:
+    6px 2px 0 #9fd9ff,
+    12px -1px 0 #ffc3d8,
+    19px 2px 0 #9fd9ff,
+    25px -1px 0 #ffc3d8;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   BALANCE DISPLAY
+   ──────────────────────────────────────────────────────────────────────────── */
+.balance {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1f4471;
+  letter-spacing: -0.01em;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   TRANSACTION LIST
+   ──────────────────────────────────────────────────────────────────────────── */
+.history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.48rem;
+}
+
+.history-list li {
+  background: #fcfeff;
+  border: 1px solid #c2d6ee;
+  border-radius: 0.72rem;
+  padding: 0.6rem 0.72rem;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+  font-size: 0.8rem;
+}
+
+.history-list li:hover {
+  transform: translateX(2px);
+  border-color: #78aff2;
+}
+
+.history-list a {
+  color: #2177f0;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 0.76rem;
+}
+
+.compact-list { gap: 0.38rem; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   NFT GRID
+   ──────────────────────────────────────────────────────────────────────────── */
+.nft-grid {
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.nft-card {
+  background: #fdfeff;
+  border: 1px solid #c9dbef;
+  border-radius: 0.78rem;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.nft-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(37, 67, 108, 0.16);
+}
+
+.nft-card img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  background: #ecf4ff;
+}
+
+.nft-card h3 {
+  margin: 0.4rem 0.5rem 0.18rem;
+  font-size: 0.78rem;
+}
+
+.nft-card p {
+  margin: 0 0.5rem 0.4rem;
+  font-size: 0.7rem;
+}
+
+.nft-mini-grid {
+  display: grid;
+  gap: 0.45rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.nft-mini-card {
+  background: #fff;
+  border: 1px solid #d4e1f3;
+  border-radius: 0.6rem;
+  overflow: hidden;
+}
+
+.nft-mini-card img {
+  width: 100%;
+  height: 72px;
+  object-fit: cover;
+  display: block;
+  background: #edf4ff;
+}
+
+.nft-mini-card p {
+  margin: 0;
+  padding: 0.3rem 0.4rem;
+  font-size: 0.7rem;
+  color: #3c5d89;
+  line-height: 1.3;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   TRANSACTION BREAKDOWN BOX
+   ──────────────────────────────────────────────────────────────────────────── */
+.tx-breakdown {
+  background: #f8fcff;
+  border: 1px solid #b8cee8;
+  border-radius: 0.78rem;
+  padding: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.32rem;
+  font-size: 0.8rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   UTILITY CLASSES
+   ──────────────────────────────────────────────────────────────────────────── */
+.tag {
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #4f73a6;
+  font-weight: 700;
+}
+
+.meta {
+  color: var(--text-2);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.mono {
+  font-family: 'IBM Plex Mono', monospace;
+  overflow-wrap: anywhere;
+  font-size: 0.76rem;
+}
+
+.warning {
+  color: #9d3042;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.phrase {
+  background: #f9fcff;
+  border: 1px dashed #97b9e0;
+  border-radius: 0.72rem;
+  padding: 0.65rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.status {
+  border-radius: 0.65rem;
+  padding: 0.5rem 0.72rem;
+  border: 1px solid transparent;
+  font-weight: 700;
+  font-size: 0.78rem;
+}
+
+.status.ok {
+  background: rgba(11, 138, 86, 0.11);
+  color: var(--ok);
+  border-color: rgba(11, 138, 86, 0.24);
+}
+
+.status.error {
+  background: rgba(191, 45, 58, 0.1);
+  color: var(--danger);
+  border-color: rgba(191, 45, 58, 0.22);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SPLASH SCREEN
+   ──────────────────────────────────────────────────────────────────────────── */
+.splash-screen {
+  width: var(--popup-w);
+  height: var(--popup-h);
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.splash-orb {
+  position: absolute;
+  border-radius: 999px;
+}
+
+.orb-left {
+  width: 220px;
+  height: 220px;
+  left: -80px;
+  top: -60px;
+  background: radial-gradient(circle, rgba(105, 164, 255, 0.24), transparent 72%);
+}
+
+.orb-right {
+  width: 240px;
+  height: 240px;
+  right: -80px;
+  bottom: -60px;
+  background: radial-gradient(circle, rgba(255, 171, 98, 0.24), transparent 72%);
+}
+
+.splash-card {
+  width: 100%;
+  text-align: center;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.72));
+  border: 1px solid rgba(170, 193, 229, 0.52);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 1.2rem;
+  box-shadow: var(--shadow-lg);
+  padding: 1.8rem 1.2rem;
+  animation: riseIn 0.55s ease-out;
+}
+
+.logo-word {
+  margin-top: 0.4rem;
+  font-family: 'Unbounded', sans-serif;
+  letter-spacing: 0.2em;
+  font-weight: 800;
+  font-size: 0.78rem;
+  color: transparent;
+  background: linear-gradient(135deg, #2f77df, #f08a1f);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.splash-eyebrow {
+  margin-top: 0.28rem;
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #6480a5;
+}
+
+.splash-title {
+  margin-top: 0.4rem;
+  margin-bottom: 0.75rem;
+  font-family: 'Unbounded', sans-serif;
+  font-size: 2rem;
+  display: inline-block;
+}
+
+.splash-card button {
+  margin-top: 0.5rem;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ANIMATION
+   ──────────────────────────────────────────────────────────────────────────── */
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
